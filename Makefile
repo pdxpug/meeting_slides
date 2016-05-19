@@ -1,26 +1,15 @@
-name=PDXPUG
+.PHONY: all clean
 
-all: $(name).pdf
+TEX=$(wildcard *.tex)
+STY=$(wildcard *.sty)
 
-%.eps: %.jpg
-	convert $< $@
+all: $(patsubst %.tex, %.pdf, $(TEX))
 
-%.eps: %.png
-	convert $< $@
-
-$(name).dvi: $(name).tex
-	-rm $@
-	latex $<
-
-%.pdf: %.dvi
-	dvipdf $<
+%.pdf: %.tex Makefile $(STY)
+	latex -halt-on-error -output-format=pdf $<
+	latex -halt-on-error -output-format=pdf $<
+	-rm $*.aux $*.log $*.nav $*.out $*.snm $*.toc texput.log
 
 clean:
-	rm -f $(name)*.log $(name)*.toc $(name)*.nav $(name)*.snm \
-			$(name)*.out $(name)*.dvi $(name)*.aux \
-			$(name)*.vrb texput.log *.eps
-
-realclean:
-	rm -f $(name)*.log $(name)*.toc $(name)*.nav $(name)*.snm \
-			$(name)*.out $(name)*.dvi $(name)*.aux $(name)*.pdf \
-			$(name)*.vrb texput.log *.eps
+	-rm $(patsubst %.tex, %.pdf, $(TEX))
+	-rm $*.aux $*.log $*.nav $*.out $*.snm $*.toc texput.log
